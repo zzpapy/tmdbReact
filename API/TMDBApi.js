@@ -18,3 +18,11 @@ export function getFilmsFromApiWithSearchedText (text,page) {
   export function getImageFromApi (name) {
     return 'https://image.tmdb.org/t/p/w300' + name
   }
+
+  export function getActor(id){
+    
+    const url = "https://api.themoviedb.org/3/person/"+id+"?api_key="+API_TOKEN+"&append_to_response=movie_credits"
+    return fetch(url)
+        .then(res => res.json())
+        .catch(er => console.error(er))
+  }

@@ -6,6 +6,7 @@ import { getFilmDetail,getImageFromApi} from '../API/TMDBApi'
 import moment from 'moment'
 import numeral from 'numeral'
 import { connect } from 'react-redux'
+import FilmCast from './FilmCast'
 
 class FilmDetail extends React.Component {
   constructor(props) {
@@ -34,11 +35,15 @@ class FilmDetail extends React.Component {
         isLoading: false
       })
     })
-}
+  }
+    _displayCast = () => {
+      const { film } = this.state
+      this.props.navigation.navigate("FilmCast", { cast: film.credits })
+    }
     _displayFilm() {
         const { film } = this.state
-        
         if (this.state.film != undefined) {
+          console.log(film.title,'tutu')
             return (
                 <ScrollView style={styles.scrollview_container}>
                   <Image
@@ -50,6 +55,10 @@ class FilmDetail extends React.Component {
                     style={styles.favorite_container}
                     onPress={() => this._toggleFavorite()}>
                     {this._displayFavoriteImage()}
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <Button title="test" onPress={() => this._displayCast()} />
+                   
                 </TouchableOpacity>
                   <Text style={styles.description_text}>{film.overview}</Text>
                   <Text style={styles.default_text}>Sorti le {moment(new Date(film.release_date)).format('DD/MM/YYYY')}</Text>
@@ -86,8 +95,7 @@ class FilmDetail extends React.Component {
         this.props.dispatch(action)
     }
     componentDidUpdate() {
-        console.log("componentDidUpdate : ")
-        console.log(this.props.favoritesFilm)
+        
       }
 
   render() {

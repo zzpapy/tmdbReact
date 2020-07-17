@@ -17,9 +17,11 @@ class FilmItem extends React.Component {
       )
     }
   }
+  
 
   render() {
     const { film, displayDetailForFilm } = this.props
+    
     return (
       <TouchableOpacity
         style={styles.main_container}
@@ -28,6 +30,7 @@ class FilmItem extends React.Component {
           style={styles.image}
           source={{uri: getImageFromApi(film.poster_path)}}
         />
+        <Text>{film.id}</Text>
         <View style={styles.content_container}>
           <View style={styles.header_container}>
             {this._displayFavoriteImage()}
