@@ -7,9 +7,7 @@ import ActorDetail from './ActorDetail'
 
 class FilmCast extends React.Component {
     _displayDetailForActor = (actorId) => {
-        let actor = getImageFromApi(actorId)
         this.props.navigation.navigate("Acteur", { actorId: actorId })
-        // this.props.navigation.pop()
       }
   render() {
 
@@ -20,10 +18,8 @@ class FilmCast extends React.Component {
                         data={this.props.route.params.cast.cast}
                         keyExtractor={(item) => item.id.toString()}
                         renderItem={({ item }) => (          
-                            <ActorDetail actor={item} displayDetailForActor={this._displayDetailForActor} />
-                                    
-                        )}
-                            
+                            <ActorDetail actor={item} displayDetailForActor={this._displayDetailForActor} />                                    
+                        )}                            
                     />
             </View>
     )

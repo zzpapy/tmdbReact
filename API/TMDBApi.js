@@ -16,7 +16,11 @@ export function getFilmsFromApiWithSearchedText (text,page) {
   }
 
   export function getImageFromApi (name) {
-    return 'https://image.tmdb.org/t/p/w300' + name
+    if(name !== null){
+      return 'https://image.tmdb.org/t/p/w300' + name
+
+    }
+    else return '../Images/cine.jpg'
   }
 
   export function getActor(id){
@@ -26,3 +30,30 @@ export function getFilmsFromApiWithSearchedText (text,page) {
         .then(res => res.json())
         .catch(er => console.error(er))
   }
+
+
+  export function getActorByName(name,page){
+    
+    const url = "https://api.themoviedb.org/3/search/person?query="+name+"&api_key="+API_TOKEN+"&page="+page+"&include_adult=false"
+    return fetch(url)
+        .then(res => res.json())
+        .catch(er => console.error(er))
+  }
+
+  export function getNow(page){
+    console.log(page,"toto")
+    const url = "https://api.themoviedb.org/3/movie/now_playing?sort_by=primary_release_date.desc&api_key="+API_TOKEN+"&language=fr-FR&page="+page+"&region=FR"
+    return fetch(url)
+        .then(res => res.json())
+        .catch(er => console.error(er))
+  }
+
+
+
+
+
+  
+
+
+
+  

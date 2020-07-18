@@ -7,6 +7,11 @@ import moment from 'moment'
 import numeral from 'numeral'
 import { connect } from 'react-redux'
 import FilmCast from './FilmCast'
+import Search from './Search'
+import { NavigationContainer } from '@react-navigation/native'
+import { createStackNavigator } from '@react-navigation/stack'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import TabNav from './TabNav'
 
 class FilmDetail extends React.Component {
   constructor(props) {
@@ -28,6 +33,17 @@ class FilmDetail extends React.Component {
     }
   }
 
+  shouldComponentUpdate(){
+    // console.log(this.props.route.params.idFilm,"tete")
+    getFilmDetail(this.props.route.params.idFilm).then(data => {
+      this.setState({
+        film: data,
+        isLoading: false
+      })
+    })
+    return true
+
+  }
   componentDidMount() {
     getFilmDetail(this.props.route.params.idFilm).then(data => {
       this.setState({
@@ -36,6 +52,29 @@ class FilmDetail extends React.Component {
       })
     })
   }
+  _afficheImg() {
+    const { film } = this.state
+    if(film.poster_path !== null){
+      if(film.backdrop_path !== null){
+      }
+      let img = getImageFromApi(film.backdrop_path)
+      console.log(img)
+      return (
+        <Image
+            style={styles.image}
+            source={{uri: img}}
+          />
+      )
+    }
+    else{
+      return(
+        <Image
+            style={styles.image}
+            source={require('../Images/cine.jpg')}
+          />
+      )
+    }
+  }
     _displayCast = () => {
       const { film } = this.state
       this.props.navigation.navigate("FilmCast", { cast: film.credits })
@@ -43,38 +82,43 @@ class FilmDetail extends React.Component {
     _displayFilm() {
         const { film } = this.state
         if (this.state.film != undefined) {
-          console.log(film.title,'tutu')
+          // console.log(film.title,'tutu')
             return (
-                <ScrollView style={styles.scrollview_container}>
-                  <Image
-                    style={styles.image}
-                    source={{uri: getImageFromApi(film.backdrop_path)}}
-                  />
-                  <Text style={styles.title_text}>{film.title}</Text>
+              <ScrollView style={styles.scrollview_container}>
+                {this._afficheImg()}
+                {/* <Image
+                  style={styles.image}
+                  source={{uri: getImageFromApi(film.backdrop_path)}}
+                /> */}
+                <Text style={styles.title_text}>{film.title}</Text>
+                <View style={{flex:1, flexDirection:'row',justifyContent:'space-around'}}>
                   <TouchableOpacity
-                    style={styles.favorite_container}
-                    onPress={() => this._toggleFavorite()}>
-                    {this._displayFavoriteImage()}
-                </TouchableOpacity>
-                <TouchableOpacity>
-                  <Button title="test" onPress={() => this._displayCast()} />
-                   
-                </TouchableOpacity>
-                  <Text style={styles.description_text}>{film.overview}</Text>
-                  <Text style={styles.default_text}>Sorti le {moment(new Date(film.release_date)).format('DD/MM/YYYY')}</Text>
-                  <Text style={styles.default_text}>Note : {film.vote_average} / 10</Text>
-                  <Text style={styles.default_text}>Nombre de votes : {film.vote_count}</Text>
-                  <Text style={styles.default_text}>Budget : {numeral(film.budget).format('0,0[.]00 $')}</Text>
-                  <Text style={styles.default_text}>Genre(s) : {film.genres.map(function(genre){
-                      return genre.name;
-                    }).join(" / ")}
-                  </Text>
-                  <Text style={styles.default_text}>Companie(s) : {film.production_companies.map(function(company){
-                      return company.name;
-                    }).join(" / ")}
-                  </Text>
-                </ScrollView>
-              )
+                      style={styles.favorite_container}
+                      onPress={() => this._toggleFavorite()}>
+                      {this._displayFavoriteImage()}
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => this._displayCast()}>
+                    <Image
+                      style={styles.cast_image}
+                      source={require('../Images/casting.png')}
+                    />                  
+                  </TouchableOpacity>
+                </View>
+                <Text style={styles.description_text}>{film.overview}</Text>
+                <Text style={styles.default_text}>Sorti le {moment(new Date(film.release_date)).format('DD/MM/YYYY')}</Text>
+                <Text style={styles.default_text}>Note : {film.vote_average} / 10</Text>
+                <Text style={styles.default_text}>Nombre de votes : {film.vote_count}</Text>
+                <Text style={styles.default_text}>Budget : {numeral(film.budget).format('0,0[.]00 $')}</Text>
+                <Text style={styles.default_text}>Genre(s) : {film.genres.map(function(genre){
+                    return genre.name;
+                  }).join(" / ")}
+                </Text>
+                <Text style={styles.default_text}>Companie(s) : {film.production_companies.map(function(company){
+                    return company.name;
+                  }).join(" / ")}
+                </Text>
+              </ScrollView>
+            )
         }
     }
     _displayFavoriteImage() {
@@ -99,6 +143,7 @@ class FilmDetail extends React.Component {
       }
 
   render() {
+    const Tab = createBottomTabNavigator()
     return (
       <View style={styles.main_container}>
         {this._displayLoading()}
@@ -111,6 +156,10 @@ class FilmDetail extends React.Component {
 const styles = StyleSheet.create({
     main_container: {
       flex: 1
+    },
+    cast_image : {
+      width: 50,
+      height: 50
     },
     loading_container: {
       position: 'absolute',

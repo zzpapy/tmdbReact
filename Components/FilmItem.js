@@ -1,7 +1,7 @@
 // Components/FilmItem.js
 
 import React from 'react'
-import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, Text, Image, TouchableOpacity,StackActions } from 'react-native'
 import { getImageFromApi } from '../API/TMDBApi'
 
 class FilmItem extends React.Component {
@@ -18,7 +18,26 @@ class FilmItem extends React.Component {
     }
   }
   
-
+  
+  _afficheImg() {
+    const { film, displayDetailForFilm } = this.props
+    if(film.poster_path !== null){
+      return (
+        <Image
+            style={styles.image}
+            source={{uri: getImageFromApi(film.poster_path)}}
+          />
+      )
+    }
+    else{
+      return(
+        <Image
+            style={styles.image}
+            source={require('../Images/cine.jpg')}
+          />
+      )
+    }
+  }
   render() {
     const { film, displayDetailForFilm } = this.props
     
@@ -26,11 +45,7 @@ class FilmItem extends React.Component {
       <TouchableOpacity
         style={styles.main_container}
         onPress={() => displayDetailForFilm(film.id)}>
-        <Image
-          style={styles.image}
-          source={{uri: getImageFromApi(film.poster_path)}}
-        />
-        <Text>{film.id}</Text>
+        {this._afficheImg()}
         <View style={styles.content_container}>
           <View style={styles.header_container}>
             {this._displayFavoriteImage()}

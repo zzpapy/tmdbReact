@@ -1,9 +1,10 @@
 // Components/Search.js
 
 import React from 'react'
-import { StyleSheet, View, TextInput, Button, Text, FlatList, ActivityIndicator } from 'react-native'
+import { StyleSheet, View, TextInput, Button, Text,LayoutAnimation,UIManager, FlatList, ActivityIndicator,TouchableOpacity } from 'react-native'
 import FilmItem from './FilmItem'
-import { getFilmsFromApiWithSearchedText } from '../API/TMDBApi'
+import ActorDetail from './ActorDetail'
+import { getFilmsFromApiWithSearchedText, getActorByName } from '../API/TMDBApi'
 import { connect } from 'react-redux'
 
 class Search extends React.Component {
@@ -15,8 +16,16 @@ class Search extends React.Component {
     this.totalPages = 0
     this.state = {
       films: [],
+      actors: [],
+      expanded: false,
       isLoading: false
     }
+    UIManager.setLayoutAnimationEnabledExperimental(true)
+  }
+
+  changeLayout = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    this.setState({ expanded: !this.state.expanded });
   }
 
   _loadFilms() {
@@ -33,6 +42,20 @@ class Search extends React.Component {
     }
   }
 
+  _loadActors() {
+    if (this.searchedText.length > 0) {
+      this.setState({ isLoading: true })
+      getActorByName(this.searchedText, this.page+1).then(data => {
+          this.page = data.page
+          this.totalPages = data.total_pages
+          this.setState({
+            actors: [ ...this.state.actors, ...data.results ],
+            isLoading: false
+          })
+      })
+    }
+  }
+
   _searchTextInputChanged(text) {
     this.searchedText = text
   }
@@ -42,13 +65,29 @@ class Search extends React.Component {
     this.totalPages = 0
     this.setState({
       films: [],
+      expanded: false
     }, () => {
         this._loadFilms()
     })
   }
 
+  _searchActors() {
+    this.page = 0
+    this.totalPages = 0
+    this.setState({
+      actors: [],
+      expanded: false
+    }, () => {
+        this._loadActors()
+    })
+  }
+
   _displayDetailForFilm = (idFilm) => {
     this.props.navigation.navigate("FilmDetail", { idFilm: idFilm })
+  }
+
+  _displayDetailForActor = (actorId) => {
+    this.props.navigation.navigate("Acteur", { actorId: actorId })
   }
 
   
@@ -67,13 +106,25 @@ class Search extends React.Component {
   render() {
     return (
       <View style={styles.main_container}>
-        <TextInput
-          style={styles.textinput}
-          placeholder='Titre du film'
-          onChangeText={(text) => this._searchTextInputChanged(text)}
-          onSubmitEditing={() => this._searchFilms()}
-        />
-        <Button title='Rechercher' onPress={() => this._searchFilms()}/>
+        <TouchableOpacity activeOpacity={0.8} onPress={this.changeLayout} style={styles.Btn}>
+        <Button title='Rechercher' onPress={this.changeLayout}/>
+        </TouchableOpacity>
+        <View style={{ height: this.state.expanded ? null : 0, overflow: 'hidden' }}>
+          <TextInput
+            style={styles.textinput}
+            placeholder='Titre du film'
+            onChangeText={(text) => this._searchTextInputChanged(text)}
+            onSubmitEditing={() => this._searchFilms()}
+          />
+          <Button style={styles.Btn} title='Recherche par film' onPress={() => this._searchFilms()}/>
+          <TextInput
+            style={styles.textinput}
+            placeholder='Acteur'
+            onChangeText={(text) => this._searchTextInputChanged(text)}
+            onSubmitEditing={() => this._searchActors()}
+          />
+          <Button style={styles.Btn} title='Recherche par acteur ou réalisateur' onPress={() => this._searchActors()}/>
+        </View>
         <FlatList
           data={this.state.films}
           extraData={this.props.favoritesFilm}
@@ -93,6 +144,14 @@ class Search extends React.Component {
                  this._loadFilms()
               }
           }}
+        />
+        <FlatList
+            numColumns={3}
+            data={this.state.actors}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (          
+                <ActorDetail actor={item} displayDetailForActor={this._displayDetailForActor} />                                    
+            )}                            
         />
         {this._displayLoading()}
       </View>
@@ -120,6 +179,14 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  Btn: {
+    padding: 10,
+  },
+  btnText: {
+    textAlign: 'center',
+    color: 'white',
+    fontSize: 20
   }
 })
 
