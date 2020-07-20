@@ -3,6 +3,7 @@
 import React from 'react'
 import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native'
 import { getImageFromApi, getActor } from '../API/TMDBApi'
+import TabNav from './TabNav'
 
 class ActorDetail extends React.Component {  
     
@@ -17,6 +18,7 @@ class ActorDetail extends React.Component {
                     style={styles.image}
                     source={{uri: getImageFromApi(actor.profile_path)}}
                 />
+                {/* <TabNav /> */}
      </TouchableOpacity>
     )
   }

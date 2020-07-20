@@ -27,21 +27,36 @@ class Acteur extends React.Component {
         })        
     }
     
-    shouldComponentUpdate(){
+    // shouldComponentUpdate(){
+    //     // console.log(this.props.route.params.idFilm,"tete")
+    //     getActor(this.props.route.params.actorId).then(data => {
+    //         this.setState({
+    //           actor: data,
+    //           isLoading: false
+    //         })
+    //     })    
+    //     return true
+    
+    //   }
+      shouldComponentUpdate(nextProps,nextState){
         // console.log(this.props.route.params.idFilm,"tete")
-        getActor(this.props.route.params.actorId).then(data => {
-            this.setState({
-              actor: data,
-              isLoading: false
-            })
-        })    
-        return true
+        if(this.props.route.params.idFilm === nextProps.route.params.idFilm){
+          return true
+        }
+        else{
+            getActor(this.props.route.params.actorId).then(data => {
+                this.setState({
+                  actor: data,
+                  isLoading: false
+                })
+            })    
+          return true
+        }
     
       }
+      
     _displayDetailForFilm = (idFilm) => {
         this.props.navigation.navigate("FilmDetail", { idFilm: idFilm })
-        this.forceUpdate()
-        console.log(idFilm,"toto")
       }
       ListViewItemSeparator = () => {
         return (
@@ -74,7 +89,6 @@ class Acteur extends React.Component {
     
     _affichActor(){
         const actor = this.state.actor
-        console.log(actor)
         if(actor !== undefined){
             return (  <View> 
                     <FlatList 

@@ -33,15 +33,20 @@ class FilmDetail extends React.Component {
     }
   }
 
-  shouldComponentUpdate(){
+  shouldComponentUpdate(nextProps,nextState){
     // console.log(this.props.route.params.idFilm,"tete")
-    getFilmDetail(this.props.route.params.idFilm).then(data => {
-      this.setState({
-        film: data,
-        isLoading: false
+    if(this.props.route.params.idFilm === nextProps.route.params.idFilm){
+      return true
+    }
+    else{
+      getFilmDetail(this.props.route.params.idFilm).then(data => {
+        this.setState({
+          film: data,
+          isLoading: false
+        })
       })
-    })
-    return true
+      return true
+    }
 
   }
   componentDidMount() {
@@ -58,7 +63,6 @@ class FilmDetail extends React.Component {
       if(film.backdrop_path !== null){
       }
       let img = getImageFromApi(film.backdrop_path)
-      console.log(img)
       return (
         <Image
             style={styles.image}
@@ -82,7 +86,6 @@ class FilmDetail extends React.Component {
     _displayFilm() {
         const { film } = this.state
         if (this.state.film != undefined) {
-          // console.log(film.title,'tutu')
             return (
               <ScrollView style={styles.scrollview_container}>
                 {this._afficheImg()}
@@ -117,6 +120,7 @@ class FilmDetail extends React.Component {
                     return company.name;
                   }).join(" / ")}
                 </Text>
+                <TabNav />
               </ScrollView>
             )
         }

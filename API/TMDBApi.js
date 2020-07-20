@@ -41,7 +41,6 @@ export function getFilmsFromApiWithSearchedText (text,page) {
   }
 
   export function getNow(page){
-    console.log(page,"toto")
     const url = "https://api.themoviedb.org/3/movie/now_playing?sort_by=primary_release_date.desc&api_key="+API_TOKEN+"&language=fr-FR&page="+page+"&region=FR"
     return fetch(url)
         .then(res => res.json())
