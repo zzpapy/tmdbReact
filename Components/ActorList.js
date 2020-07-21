@@ -23,7 +23,7 @@ class FilmList extends React.Component {
     return (
         <FlatList
           style={styles.list}
-          data={this.props.films}
+          data={this.props.actors}
           extraData={this.props.favoritesFilm}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (          

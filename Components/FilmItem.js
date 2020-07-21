@@ -42,7 +42,6 @@ class FilmItem extends React.Component {
   }
   render() {
     const { film, displayDetailForFilm } = this.props
-    console.log(film)
     return (
       <TouchableOpacity
         style={styles.main_container}

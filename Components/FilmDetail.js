@@ -18,7 +18,8 @@ class FilmDetail extends React.Component {
     super(props)
     this.state = {
       film: undefined, // Pour l'instant on n'a pas les infos du film, on initialise donc le film à undefined.
-      isLoading: true // A l'ouverture de la vue, on affiche le chargement, le temps de récupérer le détail du film
+      isLoading: true,
+      update:false // A l'ouverture de la vue, on affiche le chargement, le temps de récupérer le détail du film
     }
   }
 
@@ -34,15 +35,19 @@ class FilmDetail extends React.Component {
   }
 
   shouldComponentUpdate(nextProps,nextState){
-    // console.log(this.props.route.params.idFilm,"tete")
-    if(this.props.route.params.idFilm === nextProps.route.params.idFilm){
-      return true
+    if(this.props.route.params.idFilm === nextProps.route.params.idFilm && this.state.update === true){
+     this.setState({
+       update:false
+     })
+      return false
     }
     else{
+      // console.log(this.props.route.params.idFilm,"tete",this.state.update)
       getFilmDetail(this.props.route.params.idFilm).then(data => {
         this.setState({
           film: data,
-          isLoading: false
+          isLoading: false,
+          update: true
         })
       })
       return true
